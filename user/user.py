@@ -137,16 +137,22 @@ def send(user: str, message: str):
 
 #chequear si hay un server desconectado
 def is_zombie_node(server: str): 
-  #se obtiene el último next1 que registró en su tabla
-  next_1 = (requests.get('http://'+server+'/GetConnection', params= {"position": "next_1"})).json()
+  try:
+    #se obtiene el último next1 que registró en su tabla
+    next_1 = (requests.get('http://'+server+'/GetConnection', params= {"position": "next_1"})).json()
+  except:
+    return True
   if next_1: 
-    #si ese que el tiene registrado como next1 no lo tiene a él como previo, significa que él es un zombie
-    return server != (requests.get('http://'+next_1+'/GetConnection', params= {"position": "previous"})).json()
+    try:
+      #si ese que el tiene registrado como next1 no lo tiene a él como previo, significa que él es un zombie
+      return server != (requests.get('http://'+next_1+'/GetConnection', params= {"position": "previous"})).json()
+    except:
+      return True
   return False 
 
 #VERIFICAR ESTAS DOS LINEAS COMENTADAS POSIBLE CAUSA DE ERROR
-# @server_interface.on_event('startup')
-# @repeat_every(seconds=10)
+@server_interface.on_event('startup')
+@repeat_every(seconds=10)
 #actualiza la server list de un usuario loggeado
 def update_server_list():
   with open('./logged.json') as file:
