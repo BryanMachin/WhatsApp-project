@@ -161,7 +161,7 @@ def update_server_list():
   new_list = []
   #la nueva lista se crea con el primer nodo de la anterior que no sea zombie y su sucesor
   while len(server_list):
-    server = server_list.pop()
+    server = server_list.pop(-1)
     if not is_zombie_node(server):
       new_list.append(server)
       next_server = (requests.get('http://'+server+'/DiscoverNext')).json()
